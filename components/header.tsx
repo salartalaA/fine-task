@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 export default function Header() {
   return (
     <header className="flex items-center justify-center">
-      <div className="fixed top-3 flex w-full max-w-sm items-center justify-between rounded-full bg-card p-2">
+      <div className="fixed top-3 flex w-full max-w-sm items-center justify-between rounded-full bg-primary/5 p-2 backdrop-blur-md">
         {/* Logo */}
         <div className="flex items-center gap-2">
           <span className="rounded-full bg-primary/10 p-3 text-primary">

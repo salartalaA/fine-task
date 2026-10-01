@@ -66,7 +66,7 @@ export default function Footer() {
 
   return (
     <footer className="flex w-full items-center justify-center">
-      <nav className="fixed bottom-3 flex max-w-sm items-center justify-center rounded-full bg-card p-1.5">
+      <nav className="fixed bottom-3 flex max-w-sm items-center justify-center rounded-full bg-primary/5 p-1.5 backdrop-blur-md">
         {navigationItems.map((navItem) => {
           const Icon = navItem.icon;
           const isActive = activeTab === navItem.tab;
