@@ -40,7 +40,7 @@ export default function Greetings() {
   }, []);
 
   return (
-    <div className="mx-auto flex items-center justify-between rounded-lg bg-accent p-4">
+    <div className="mx-auto flex items-center justify-between rounded-lg bg-accent p-3">
       <div className="flex flex-col gap-2">
         <h2 className="font-semibold">{"بعد از ظهرت بخیر سالی ☀️"}</h2>
 

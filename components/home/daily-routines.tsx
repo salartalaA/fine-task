@@ -41,7 +41,7 @@ export default function DailyRoutines() {
   };
 
   return (
-    <div className="space-y-2 rounded-lg bg-accent p-4 py-2">
+    <div className="space-y-2 rounded-lg bg-accent p-3">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1">
           <Flame className="fill-destructive text-amber-500" size={20} />

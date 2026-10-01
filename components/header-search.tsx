@@ -14,14 +14,14 @@ export default function HeaderSearch() {
   return (
     <div className="relative mx-2">
       <Input
-        className="border-primary/20 text-xs"
+        className="border-input bg-input text-xs"
         onChange={handleSearch}
         placeholder="جستجو ..."
         type="text"
         value={searchVal}
       />
 
-      <span className="absolute top-1.5 left-1 rounded-full bg-card p-1 text-foreground">
+      <span className="absolute top-1.5 left-1 rounded-full bg-input p-1 text-foreground">
         <Search size={16} />
       </span>
     </div>
