@@ -1,42 +1,23 @@
-# EXAMPLE USAGE:
-#
-#   Refer for explanation to following link:
-#   https://lefthook.dev/configuration/
-#
-# pre-push:
-#   jobs:
-#     - name: packages audit
-#       tags:
-#         - frontend
-#         - security
-#       run: yarn audit
-#
-#     - name: gems audit
-#       tags:
-#         - backend
-#         - security
-#       run: bundle audit
-#
-# pre-commit:
-#   parallel: true
-#   jobs:
-#     - run: yarn eslint {staged_files}
-#       glob: "*.{js,ts,jsx,tsx}"
-#
-#     - name: rubocop
-#       glob: "*.rb"
-#       exclude:
-#         - config/application.rb
-#         - config/routes.rb
-#       run: bundle exec rubocop --force-exclusion -- {all_files}
-#
-#     - name: govet
-#       files: git ls-files -m
-#       glob: "*.go"
-#       run: go vet -- {files}
-#
-#     - script: "hello.js"
-#       runner: node
-#
-#     - script: "hello.go"
-#       runner: go run
+pre-commit:
+  jobs:
+    - name: format
+      run: pnpm format
+      fail_text: "Biome format failed! Run 'pnpm format' manually if auto-fix didn't work (or fix them yourself)."
+      stage_fixed: true
+      glob: "*.{js,jsx,ts,tsx,json,jsonc,css}"
+      
+    - name: lint
+      run: pnpm lint
+      fail_text: "Biome check failed! Please fix lint errors" # Failed reason which shows in terminal
+      glob: "*.{js,jsx,ts,tsx,json,jsonc,css}"
+
+    - name: check-types
+      run: pnpm check-types
+      fail_text: "TypeScript validation failed. Please fix type errors."
+      glob: "*.{ts,tsx}"
+
+pre-push:
+  jobs:
+    - name: build
+      run: pnpm build
+      fail_text: "Build failed. Please fix build errors."

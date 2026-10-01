@@ -3,13 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "lint": "biome check",
-    "format": "biome format --write",
     "check": "ultracite check",
-    "fix": "ultracite fix"
+    "check-types": "next typegen && tsc --noEmit",
+    "dev": "next dev",
+    "fix": "ultracite fix",
+    "format": "biome check --write",
+    "lint": "biome check",
+    "start": "next start"
   },
   "dependencies": {
     "next": "16.3.7",
