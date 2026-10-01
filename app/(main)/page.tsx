@@ -1,3 +1,4 @@
+import CreateTask from "@/components/home/create-task";
 import DailyRoutines from "@/components/home/daily-routines";
 import Greetings from "@/components/home/greetings";
 
@@ -7,6 +8,8 @@ export default function Home() {
       <Greetings />
 
       <DailyRoutines />
+
+      <CreateTask />
     </div>
   );
 }
