@@ -34,6 +34,18 @@
       "react": "recommended"
     }
   },
+  "overrides": [
+    {
+      "includes": ["components/ui/*.tsx"],
+      "linter": {
+        "rules": {
+          "a11y": {
+            "noLabelWithoutControl": "off"
+          }
+        }
+      }
+    }
+  ],
   "assist": {
     "actions": {
       "source": {
