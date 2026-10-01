@@ -39,7 +39,7 @@ const navigationItems: NavigationItem[] = [
     icon: Flame,
     tab: "HABITS",
     title: "عادات",
-    total: 4,
+    total: 10,
   },
   {
     done: 0,
@@ -66,7 +66,7 @@ export default function Footer() {
 
   return (
     <footer className="flex w-full items-center justify-center">
-      <nav className="fixed bottom-4 flex max-w-sm items-center justify-center rounded-full bg-card p-3">
+      <nav className="fixed bottom-3 flex max-w-sm items-center justify-center rounded-full bg-card p-1.5">
         {navigationItems.map((navItem) => {
           const Icon = navItem.icon;
           const isActive = activeTab === navItem.tab;
@@ -101,7 +101,7 @@ export default function Footer() {
               </div>
 
               {navItem.total !== undefined && (
-                <span className="absolute -top-1 -right-1 z-20 rounded-full bg-primary px-2 text-foreground text-sm">
+                <span className="absolute -top-1 -right-1 z-20 rounded-full bg-primary px-2 text-foreground text-xs">
                   {navItem.total}
                 </span>
               )}
