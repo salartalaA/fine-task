@@ -35,7 +35,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       dir="rtl"
       lang="fa"
     >
-      <body className="flex min-h-full flex-col">{children}</body>
+      <body className="flex min-h-screen flex-col">{children}</body>
     </html>
   );
 }
