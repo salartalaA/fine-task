@@ -56,7 +56,7 @@ export default function DailyRoutines() {
         </button>
       </div>
 
-      <div>
+      <div className="flex w-fit flex-col items-start gap-2">
         {habits.map((habit) => {
           const selectedItem = doneList.includes(habit.id);
 
@@ -65,7 +65,7 @@ export default function DailyRoutines() {
           return (
             <Button
               className={cn(
-                "rounded-xl bg-primary/10 px-3 py-1.5 text-foreground/90 text-xs hover:bg-primary/20",
+                "rounded-xl bg-primary/10 px-3 py-1.5 text-foreground/90 text-sm hover:bg-primary/20",
                 selectedItem &&
                   "bg-green-500/10 text-green-600 hover:bg-green/500/10"
               )}
