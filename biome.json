@@ -41,6 +41,9 @@
         "rules": {
           "a11y": {
             "noLabelWithoutControl": "off"
+          },
+          "suspicious": {
+            "noLeakedRender": "off"
           }
         }
       }
