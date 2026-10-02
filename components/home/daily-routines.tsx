@@ -70,7 +70,6 @@ export default function DailyRoutines() {
                   "bg-green-500/10 text-green-600 hover:bg-green/500/10"
               )}
               key={habit.id}
-              // biome-ignore lint/performance/noJsxPropsBind: No performance issue
               onClick={() => handleDone(habit.id)}
             >
               <Icon

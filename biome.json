@@ -27,8 +27,12 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "preset": "recommended"
+      "preset": "recommended",
+      "performance": {
+        "noJsxPropsBind": "off"
+      }
     },
+
     "domains": {
       "next": "recommended",
       "react": "recommended"

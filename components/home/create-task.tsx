@@ -48,7 +48,6 @@ export default function CreateTask() {
       <div className="flex items-center gap-2">
         <Input
           className="border-primary/20 text-sm"
-          // biome-ignore lint/performance/noJsxPropsBind: No performance issue
           onChange={(e) => setTaskTitle(e.target.value)}
           placeholder="اضافه کردن تسک ..."
           value={taskTitle}
@@ -68,7 +67,6 @@ export default function CreateTask() {
 
       <button
         className="mt-3 mr-2 flex items-center gap-2 text-sm"
-        // biome-ignore lint/performance/noJsxPropsBind: No performance issue
         onClick={() => setShowSubtasks((prev) => !prev)}
         type="button"
       >
@@ -102,7 +100,6 @@ export default function CreateTask() {
                     >
                       <button
                         className="transition-colors hover:text-primary/80"
-                        // biome-ignore lint/performance/noJsxPropsBind: No performance issue
                         onClick={() => handleRemoveSubTask(checkListItem.id)}
                         type="button"
                       >
@@ -118,7 +115,6 @@ export default function CreateTask() {
               <div className="flex w-full items-center gap-2">
                 <Input
                   className="border-primary/20 text-sm"
-                  // biome-ignore lint/performance/noJsxPropsBind: No performance issue
                   onChange={(e) => setCheckListValue(e.target.value)}
                   placeholder="قدم‌های چک‌لیستت رو تایپ کن ..."
                   value={checkListValue}

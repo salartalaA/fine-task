@@ -40,11 +40,7 @@ export function TaskDueDate() {
   const selectedDue = dueDates.find((dueDate) => dueDate.value === due);
 
   return (
-    <Select
-      // biome-ignore lint/performance/noJsxPropsBind: No performance issue
-      onValueChange={(value) => setDue(value as ActiveDue)}
-      value={due}
-    >
+    <Select onValueChange={(value) => setDue(value as ActiveDue)} value={due}>
       <SelectTrigger className="w-full max-w-fit bg-primary/10 [&>svg]:text-foreground">
         <Calendar className="text-primary!" />
         <SelectValue>{selectedDue?.label}</SelectValue>

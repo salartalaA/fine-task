@@ -47,7 +47,6 @@ export function TaskRecurrence() {
 
   return (
     <Select
-      // biome-ignore lint/performance/noJsxPropsBind: No performance issue
       onValueChange={(value) => setRecurrence(value as ActiveRecurrence)}
       value={recurrence}
     >

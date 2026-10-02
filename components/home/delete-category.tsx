@@ -56,7 +56,6 @@ export function DeleteCategoryDialog({
 
       <DialogContent
         className="max-w-sm! border border-primary/10 bg-primary/5 backdrop-blur-md"
-        // biome-ignore lint/performance/noJsxPropsBind: No performance issue
         onKeyDownCapture={(e) => {
           e.stopPropagation();
         }}
@@ -71,7 +70,6 @@ export function DeleteCategoryDialog({
         </DialogHeader>
 
         <Select
-          // biome-ignore lint/performance/noJsxPropsBind: No performance issue
           onValueChange={(value) => setSelectedCategory(value as string)}
           value={selectedCategory}
         >

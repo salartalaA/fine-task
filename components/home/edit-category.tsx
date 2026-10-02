@@ -64,7 +64,6 @@ export function EditCategoryDialog({ categories }: EditCategoryDialogProps) {
 
       <DialogContent
         className="max-w-sm! border border-primary/10 bg-primary/5 backdrop-blur-md"
-        // biome-ignore lint/performance/noJsxPropsBind: No performance issue
         onKeyDownCapture={(e) => {
           e.stopPropagation();
         }}
@@ -79,7 +78,6 @@ export function EditCategoryDialog({ categories }: EditCategoryDialogProps) {
         </DialogHeader>
 
         <Select
-          // biome-ignore lint/performance/noJsxPropsBind: No performance issue
           onValueChange={(value) => handleCategoryChange(value as string)}
           value={selectedCategory}
         >
@@ -104,7 +102,6 @@ export function EditCategoryDialog({ categories }: EditCategoryDialogProps) {
 
         <Input
           disabled={!selectedCategory}
-          // biome-ignore lint/performance/noJsxPropsBind: No performance issue
           onChange={(e) => {
             setCategoryName(e.target.value);
           }}

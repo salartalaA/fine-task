@@ -34,7 +34,6 @@ export function AddCategoryDialog() {
       />
       <DialogContent
         className="max-w-sm! border border-primary/10 bg-primary/5 backdrop-blur-md"
-        // biome-ignore lint/performance/noJsxPropsBind: No performance issue
         onKeyDownCapture={(e) => {
           e.stopPropagation();
         }}
@@ -49,7 +48,6 @@ export function AddCategoryDialog() {
 
         <Input
           id="add-category"
-          // biome-ignore lint/performance/noJsxPropsBind: No performance issue
           onChange={(e) => setCategoryName(e.target.value)}
           placeholder="مثال: سرگرمی و آخر هفته"
           type="text"

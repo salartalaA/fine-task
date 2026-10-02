@@ -55,7 +55,6 @@ export function TaskCategories() {
 
   return (
     <Select
-      // biome-ignore lint/performance/noJsxPropsBind: No performance issue
       onValueChange={(value) => setCategory(value as string)}
       value={category}
     >
