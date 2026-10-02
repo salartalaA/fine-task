@@ -2,6 +2,9 @@
 
 import { Folder } from "lucide-react";
 import { useState } from "react";
+import { AddCategoryDialog } from "@/components/home/add-category";
+import { DeleteCategoryDialog } from "@/components/home/delete-category";
+import { EditCategoryDialog } from "@/components/home/edit-category";
 import {
   Select,
   SelectContent,
@@ -10,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 
 interface Category {
@@ -77,6 +81,16 @@ export function TaskCategories() {
             </SelectItem>
           ))}
         </SelectGroup>
+
+        <Separator className={"mt-3 mb-3 bg-primary/30"} />
+
+        <div className="mx-2 mb-2 flex items-center justify-center gap-1">
+          <AddCategoryDialog />
+
+          <EditCategoryDialog categories={categories} />
+
+          <DeleteCategoryDialog categories={categories} />
+        </div>
       </SelectContent>
     </Select>
   );
