@@ -1,9 +1,9 @@
 "use client";
 
-import { cn } from "cn";
 import { ArrowLeft, Circle, CircleCheck, Flame } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface Habit {
   id: number;

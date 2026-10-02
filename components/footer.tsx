@@ -1,6 +1,5 @@
 "use client";
 
-import { cn } from "cn";
 import {
   Calendar,
   CircleCheck,
@@ -13,6 +12,7 @@ import { motion } from "motion/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface NavigationItem {
   done: number;

@@ -1,6 +1,5 @@
 "use client";
 
-import { cn } from "cn";
 import { Repeat } from "lucide-react";
 import { useState } from "react";
 import {
@@ -11,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
 type ActiveRecurrence = "ONE_TIME" | "DAILY" | "WEEKLY" | "MONTHLY";
 
