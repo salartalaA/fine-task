@@ -3,7 +3,6 @@
 import {
   Calendar,
   CircleCheck,
-  Clock,
   Flame,
   Inbox,
   type LucideIcon,
@@ -44,13 +43,7 @@ const navigationItems: NavigationItem[] = [
   },
   {
     done: 0,
-    href: "/time-line",
-    icon: Clock,
-    title: "بازه زمانی",
-  },
-  {
-    done: 0,
-    href: "/logbook",
+    href: "/log-book",
     icon: CircleCheck,
     title: "تاریخچه",
   },
