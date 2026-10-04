@@ -14,35 +14,28 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 interface NavigationItem {
-  done: number;
   href: string;
   icon: LucideIcon;
   title: string;
-  total?: number;
 }
 
 const navigationItems: NavigationItem[] = [
   {
-    done: 5,
     href: "/",
     icon: Calendar,
     title: "امروز",
   },
   {
-    done: 8,
     href: "/all-tasks",
     icon: Inbox,
     title: "همه",
   },
   {
-    done: 0,
     href: "/habits",
     icon: Flame,
     title: "عادات",
-    total: 10,
   },
   {
-    done: 0,
     href: "/log-book",
     icon: CircleCheck,
     title: "تاریخچه",
@@ -86,12 +79,6 @@ export default function Footer() {
                   <Icon size={14} />
                   <div className="text-xs">{navItem.title}</div>
                 </div>
-
-                {navItem.total !== undefined && (
-                  <span className="absolute -top-1 -right-1 z-20 rounded-full bg-primary px-2 text-foreground text-xs">
-                    {navItem.total}
-                  </span>
-                )}
               </Link>
             </Button>
           );
