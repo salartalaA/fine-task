@@ -1,6 +1,6 @@
 import { NotepadText } from "lucide-react";
-import Image from "next/image";
 import HeaderSearch from "@/components/header-search";
+import { HeaderProfile } from "@/components/home/header-profile";
 import { Badge } from "@/components/ui/badge";
 
 export default function Header() {
@@ -23,13 +23,7 @@ export default function Header() {
         <HeaderSearch />
 
         {/* Profile */}
-        <Image
-          alt="profile"
-          className="size-11! rounded-full"
-          height={44}
-          src={"/cat.jpg"}
-          width={44}
-        />
+        <HeaderProfile />
       </div>
     </header>
   );
