@@ -44,12 +44,19 @@ interface Recurrence {
   value: ActiveRecurrence;
 }
 
+type ActiveDue = "TODAY" | "TOMORROW" | "NO_DATE";
+
+interface DueDate {
+  label: string;
+  value: ActiveDue;
+}
+
 export function TaskDetailsDialog({ taskTitle }: { taskTitle: string }) {
   const [isDone, setIsDone] = useState(false);
   const [taskName, setTaskName] = useState("");
   const [note, setNote] = useState("");
   const [category, setCategory] = useState("INBOX");
-  const [dueDate, setDueDate] = useState("2026-10-03");
+  const [due, setDue] = useState<ActiveDue>("TODAY");
   const [recurrence, setRecurrence] = useState<ActiveRecurrence>("ONE_TIME");
 
   const [open, setOpen] = useState(false);
@@ -100,11 +107,28 @@ export function TaskDetailsDialog({ taskTitle }: { taskTitle: string }) {
     },
   ];
 
+  const dueDates: DueDate[] = [
+    {
+      label: "امروز",
+      value: "TODAY",
+    },
+    {
+      label: "فردا",
+      value: "TOMORROW",
+    },
+    {
+      label: "بدون تاریخ",
+      value: "NO_DATE",
+    },
+  ];
+
   const selectedCategory = categories.find((cat) => cat.value === category);
 
   const selectedRecurrence = recurrences.find(
     (rec) => rec.value === recurrence
   );
+
+  const selectedDue = dueDates.find((dueDate) => dueDate.value === due);
 
   return (
     <Dialog onOpenChange={() => setOpen(false)} open={open}>
@@ -122,7 +146,7 @@ export function TaskDetailsDialog({ taskTitle }: { taskTitle: string }) {
 
       <DialogContent
         className={cn(
-          "flex max-h-[88vh] max-w-sm flex-col gap-0 overflow-hidden rounded-3xl bg-primary/5 p-0 ring-primary/10 backdrop-blur-md",
+          "flex max-h-[88vh] max-w-sm! flex-col gap-0 overflow-hidden rounded-3xl bg-primary/5 p-0 ring-primary/10 backdrop-blur-md",
           open && "duration-100"
         )}
         showCloseButton={false}
@@ -235,14 +259,35 @@ export function TaskDetailsDialog({ taskTitle }: { taskTitle: string }) {
                 <span>{"مهلت"}</span>
               </span>
 
-              {/* TODO: Add a persian date picker */}
+              <Select
+                onValueChange={(value) => setDue(value as ActiveDue)}
+                value={due}
+              >
+                <SelectTrigger className="w-full bg-transparent [&>svg]:text-foreground">
+                  <SelectValue className={"text-xs"}>
+                    {selectedDue?.label}
+                  </SelectValue>
+                </SelectTrigger>
 
-              <Input
-                className="h-auto border-0 bg-transparent p-0 font-medium text-xs"
-                onChange={(e) => setDueDate(e.target.value)}
-                type="date"
-                value={dueDate}
-              />
+                <SelectContent
+                  className={"w-fit rounded-lg bg-card/10 backdrop-blur-md"}
+                >
+                  <SelectGroup className={"flex flex-col gap-1"}>
+                    {dueDates.map((dueDate) => (
+                      <SelectItem
+                        className={cn(
+                          "bg-transparent",
+                          dueDate.value === due && "bg-accent text-primary"
+                        )}
+                        key={dueDate.value}
+                        value={dueDate.value}
+                      >
+                        {dueDate.label}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
