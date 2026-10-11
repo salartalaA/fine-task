@@ -1,4 +1,4 @@
-import { Flame, Plus } from "lucide-react";
+import { Flame, Plus, Trash2 } from "lucide-react";
 import HabitsList from "@/components/home/habits-list";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -43,7 +43,9 @@ export default function Habits() {
           <div>
             <h2 className="font-semibold">{"عادات روزانه"}</h2>
             <p className="font-semibold text-muted-foreground text-xs">
-              {"روزی یک ضربه برای ایجاد تداومی ملایم و پایدار"}
+              {
+                "هرروز یه سری کارا رو می‌خوای انجام بدی یادت می‌ره؟ اینجا اضافشون کن"
+              }
             </p>
           </div>
         </div>
@@ -82,7 +84,12 @@ export default function Habits() {
             >
               <span>{habit.emoji}</span>
               <span>{habit.title}</span>
-              <Plus className="size-3 text-primary" />
+
+              <div className="ms-1 flex items-center gap-2">
+                <Plus className="size-3 text-primary" />
+
+                <Trash2 className="size-3 text-destructive" />
+              </div>
             </Button>
           ))}
         </div>
