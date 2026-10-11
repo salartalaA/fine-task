@@ -11,7 +11,7 @@ model Task {
   userId     String
   categoryId String?
   subTasks   SubTask[]
-  category   Category?  @relation(fields: [categoryId], references: [id])
+  category   Category?  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
