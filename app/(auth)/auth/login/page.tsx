@@ -1,5 +1,7 @@
 import { ArrowLeft, Heart, NotepadText } from "lucide-react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { requireActiveUser } from "@/app/actions/user";
 import LoginForm from "@/components/auth/login-form";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -11,7 +13,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-export default function RegisterPage() {
+export default async function RegisterPage() {
+  const currentUser = await requireActiveUser();
+
+  if (currentUser.user) {
+    return redirect("/");
+  }
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-accent/60">
       <Card className="relative w-full max-w-sm border border-primary/20 bg-primary/5">
@@ -22,8 +30,12 @@ export default function RegisterPage() {
             </span>
             {"خوش برگشتی"}
           </CardTitle>
-          <CardDescription className="font-bold text-xs">
-            {"ممنون که انتخابمون کردی ♡"}
+          <CardDescription className="flex items-center justify-center gap-1 font-bold text-xs">
+            {"ممنون که انتخابمون کردی"}
+            <Heart
+              className="animate-pulse fill-pink-400 stroke-2 stroke-red-400"
+              size={12}
+            />
           </CardDescription>
 
           <Badge className="absolute bg-primary/10 p-3 text-primary">

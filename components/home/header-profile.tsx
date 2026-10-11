@@ -1,8 +1,9 @@
 "use client";
 
-import { CircleCheck, LogOut, Sparkles, X } from "lucide-react";
+import { LogOut, Sparkles, X } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
+import { logout } from "@/app/actions/user";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -16,6 +17,10 @@ import {
 
 export function HeaderProfile() {
   const [openState, setOpenState] = useState(false);
+
+  const handleLogOut = async () => {
+    await logout();
+  };
 
   return (
     <Dialog onOpenChange={setOpenState} open={openState}>
@@ -76,19 +81,20 @@ export function HeaderProfile() {
             <p className="mt-2 text-center font-semibold">{"4"}</p>
           </div> */}
 
-        <div className="flex-1 rounded-sm border border-primary/10 bg-primary/5 p-2">
+        {/* <div className="flex-1 rounded-sm border border-primary/10 bg-primary/5 p-2">
           <div className="flex items-center justify-center gap-1 text-emerald-500">
             <CircleCheck size={20} />
             <h3 className="font-semibold text-xs">{"تسک‌های انجام شده"}</h3>
           </div>
 
           <p className="mt-2 text-center font-semibold">{"5"}</p>
-        </div>
+        </div> */}
         {/* </div> */}
 
         <DialogFooter>
           <Button
             className={"w-full rounded-sm bg-destructive/20 p-5"}
+            onClick={handleLogOut}
             variant={"destructive"}
           >
             <LogOut className="scale-x-[-1]" />

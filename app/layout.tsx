@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import localFont from "next/font/local";
+import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 
 const vazirFont = localFont({
@@ -35,7 +36,25 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       dir="rtl"
       lang="fa"
     >
-      <body className="flex min-h-screen flex-col">{children}</body>
+      <body className="flex min-h-screen flex-col">
+        {children}
+
+        <Toaster
+          position="top-center"
+          toastOptions={{
+            className:
+              "shadow-[0_8px_30px_rgba(0,0,0,0.35)]! backdrop-blur-xl! font-vazir!",
+            classNames: {
+              closeButton:
+                "border-border/60! bg-background/50! text-muted-foreground! hover:bg-background/80! hover:text-foreground!",
+              error:
+                "border-destructive/20! bg-destructive/10! text-destructive!",
+              success: "border-primary/20! bg-primary/10! text-primary!",
+            },
+            closeButton: true,
+          }}
+        />
+      </body>
     </html>
   );
 }
