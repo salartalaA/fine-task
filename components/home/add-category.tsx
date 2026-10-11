@@ -2,6 +2,8 @@
 
 import { Plus } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
+import { createCategory } from "@/app/actions/category";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,12 +16,25 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import type { Category } from "./task-properties/task-categories";
 
 export function AddCategoryDialog() {
-  const [categoryName, setCategoryName] = useState("");
+  const [categoryName, setCategoryName] = useState<Category["value"]>("");
+  const [open, setOpen] = useState(false);
+
+  const handleAddCategory = async () => {
+    const result = await createCategory(categoryName);
+
+    if (!result?.success) {
+      return toast.error(result?.message);
+    }
+
+    setOpen(false);
+    setCategoryName("");
+  };
 
   return (
-    <Dialog>
+    <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger
         render={
           <Button
@@ -60,6 +75,7 @@ export function AddCategoryDialog() {
               "flex-1 border-primary/20 bg-primary/10 text-primary hover:bg-primary/20"
             }
             disabled={!categoryName.trim()}
+            onClick={handleAddCategory}
           >
             {"افزودن"}
           </Button>
