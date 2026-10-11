@@ -11,6 +11,7 @@ import {
   X,
 } from "lucide-react";
 import { useState } from "react";
+import type { Due } from "@/app/generated/prisma/enums";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -44,11 +45,9 @@ interface Recurrence {
   value: ActiveRecurrence;
 }
 
-type ActiveDue = "TODAY" | "TOMORROW" | "NO_DATE";
-
 interface DueDate {
   label: string;
-  value: ActiveDue;
+  value: Due;
 }
 
 export function TaskDetailsDialog({ taskTitle }: { taskTitle: string }) {
@@ -56,7 +55,7 @@ export function TaskDetailsDialog({ taskTitle }: { taskTitle: string }) {
   const [taskName, setTaskName] = useState("");
   const [note, setNote] = useState("");
   const [category, setCategory] = useState("INBOX");
-  const [due, setDue] = useState<ActiveDue>("TODAY");
+  const [due, setDue] = useState<Due>("TODAY");
   const [recurrence, setRecurrence] = useState<ActiveRecurrence>("ONE_TIME");
 
   const [open, setOpen] = useState(false);
@@ -117,8 +116,8 @@ export function TaskDetailsDialog({ taskTitle }: { taskTitle: string }) {
       value: "TOMORROW",
     },
     {
-      label: "بدون تاریخ",
-      value: "NO_DATE",
+      label: "پس فردا",
+      value: "AFTER_TOMORROW",
     },
   ];
 
@@ -260,7 +259,7 @@ export function TaskDetailsDialog({ taskTitle }: { taskTitle: string }) {
               </span>
 
               <Select
-                onValueChange={(value) => setDue(value as ActiveDue)}
+                onValueChange={(value) => setDue(value as Due)}
                 value={due}
               >
                 <SelectTrigger className="w-full bg-transparent [&>svg]:text-foreground">

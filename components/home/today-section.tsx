@@ -1,7 +1,7 @@
 import AllTasks from "@/components/home/all-tasks";
-import CreateTask from "@/components/home/create-task";
 import DailyRoutines from "@/components/home/daily-routines";
 import Greetings from "@/components/home/greetings";
+import TaskBaker from "@/components/home/task-baker";
 
 export default function TodaySection() {
   return (
@@ -10,7 +10,7 @@ export default function TodaySection() {
 
       <DailyRoutines />
 
-      <CreateTask />
+      <TaskBaker />
 
       <AllTasks />
     </div>

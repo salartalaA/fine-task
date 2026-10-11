@@ -2,8 +2,8 @@ model Task {
   id         String     @id @default(cuid())
   title      String
   notes      String?
-  dueAt      DateTime?
-  recurrence Recurrence @default(NONE)
+  dueAt      Due?
+  recurrence Recurrence
   isDone     Boolean    @default(false)
   isPin      Boolean    @default(false)
   createdAt  DateTime   @default(now())
@@ -16,8 +16,14 @@ model Task {
 }
 
 enum Recurrence {
-  NONE
+  ONE_TIME
   DAILY
   WEEKLY
   MONTHLY
+}
+
+enum Due {
+  TODAY
+  TOMORROW
+  AFTER_TOMORROW
 }

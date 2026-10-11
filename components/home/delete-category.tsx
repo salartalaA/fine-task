@@ -20,14 +20,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-interface Category {
-  label: string;
-  value: string;
-}
+import type { CreateTaskData } from "@/lib/validation/task";
 
 interface DeleteCategoryDialogProps {
-  categories: Category[];
+  categories: CreateTaskData["category"][];
 }
 
 export function DeleteCategoryDialog({
@@ -75,7 +71,7 @@ export function DeleteCategoryDialog({
         >
           <SelectTrigger className="w-full bg-primary/10 [&>svg]:text-foreground">
             <SelectValue placeholder="انتخاب دسته‌بندی">
-              {selectedCategoryData?.label}
+              {selectedCategoryData?.value}
             </SelectValue>
           </SelectTrigger>
 
@@ -86,14 +82,14 @@ export function DeleteCategoryDialog({
                 key={category.value}
                 value={category.value}
               >
-                {category.label}
+                {category.value}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
         {selectedCategoryData && (
           <p className="font-semibold text-sm">
-            {`مطمئنی که می‌خوای دسته‌بندی «${selectedCategoryData.label}» رو حذف کنی؟`}
+            {`مطمئنی که می‌خوای دسته‌بندی «${selectedCategoryData.value}» رو حذف کنی؟`}
           </p>
         )}
 

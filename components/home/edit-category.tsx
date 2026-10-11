@@ -21,14 +21,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-interface Category {
-  label: string;
-  value: string;
-}
+import type { CreateTaskData } from "@/lib/validation/task";
 
 interface EditCategoryDialogProps {
-  categories: Category[];
+  categories: CreateTaskData["category"][];
 }
 
 export function EditCategoryDialog({ categories }: EditCategoryDialogProps) {
@@ -44,7 +40,7 @@ export function EditCategoryDialog({ categories }: EditCategoryDialogProps) {
 
     const category = categories.find((cat) => cat.value === value);
 
-    setCategoryName(category?.label ?? "");
+    setCategoryName(category?.value ?? "");
   }
 
   return (
@@ -83,7 +79,7 @@ export function EditCategoryDialog({ categories }: EditCategoryDialogProps) {
         >
           <SelectTrigger className="w-full bg-primary/10 [&>svg]:text-foreground">
             <SelectValue placeholder="انتخاب دسته‌بندی">
-              {selectedCategoryData?.label}
+              {selectedCategoryData?.value}
             </SelectValue>
           </SelectTrigger>
 
@@ -94,7 +90,7 @@ export function EditCategoryDialog({ categories }: EditCategoryDialogProps) {
                 key={category.value}
                 value={category.value}
               >
-                {category.label}
+                {category.value}
               </SelectItem>
             ))}
           </SelectContent>

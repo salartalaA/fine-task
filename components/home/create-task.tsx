@@ -1,69 +1,129 @@
 "use client";
 
-import { ListMinus, ListPlus, Plus, X } from "lucide-react";
-import { type SubmitEvent, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ListMinus, ListPlus, Loader2, Plus, X } from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { createTask } from "@/app/actions/task";
+import type { Category } from "@/components/home/task-properties/task-categories";
 import TaskProperties from "@/components/home/task-properties/task-properties";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
+import { type CreateTaskData, createTaskSchema } from "@/lib/validation/task";
 
 interface CheckListItem {
   id: string;
   text: string;
 }
 
-export default function CreateTask() {
-  const [taskTitle, setTaskTitle] = useState("");
+export default function CreateTask({ categories }: { categories: Category[] }) {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    control,
+    setValue,
+    reset,
+    formState: { isSubmitting },
+  } = useForm<CreateTaskData>({
+    defaultValues: {
+      subTasks: [],
+    },
+    resolver: zodResolver(createTaskSchema),
+  });
+
+  const taskTitle = watch("title") ?? "";
+
   const [checkListItems, setCheckListItems] = useState<CheckListItem[]>([]);
 
   const [checkListValue, setCheckListValue] = useState("");
 
   const [showSubtasks, setShowSubtasks] = useState(false);
 
-  const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
-    e.preventDefault();
-  };
+  const onsubmit = async (newTask: CreateTaskData) => {
+    const result = await createTask(newTask);
 
-  const handleAddCheckListItem = () => {
-    if (checkListValue.trim() === "") {
+    if (!result.success) {
+      toast.error("message" in result && result.message);
       return;
     }
 
-    setCheckListItems((prev) => [
-      ...prev,
-      { id: crypto.randomUUID(), text: checkListValue.trim() },
-    ]);
+    reset();
+
+    setCheckListItems([]);
+
+    setCheckListValue("");
+  };
+
+  const handleAddCheckListItem = () => {
+    const title = checkListValue.trim();
+
+    if (!title) {
+      return;
+    }
+
+    const updatedItems = [
+      ...checkListItems,
+      {
+        id: crypto.randomUUID(),
+        text: title,
+      },
+    ];
+
+    setCheckListItems(updatedItems);
+
+    setValue(
+      "subTasks",
+      updatedItems.map((item) => ({ title: item.text })),
+      { shouldDirty: true, shouldValidate: true }
+    );
 
     setCheckListValue("");
   };
 
   const handleRemoveSubTask = (id: string) => {
-    setCheckListItems((prev) => prev.filter((item) => item.id !== id));
+    const updatedItems = [...checkListItems.filter((item) => item.id !== id)];
+
+    setCheckListItems(updatedItems);
+
+    setValue(
+      "subTasks",
+      updatedItems.map((item) => ({ title: item.text })),
+      { shouldDirty: true, shouldValidate: true }
+    );
   };
 
   return (
-    <form className="rounded-lg bg-accent p-2" onSubmit={handleSubmit}>
+    <form
+      className="rounded-lg bg-accent p-2"
+      onSubmit={handleSubmit(onsubmit)}
+    >
       <div className="flex items-center gap-2">
         <Input
           className="border-primary/20 text-sm"
-          onChange={(e) => setTaskTitle(e.target.value)}
           placeholder="اضافه کردن تسک ..."
-          value={taskTitle}
+          {...register("title")}
         />
         <Button
           className="rounded-sm bg-primary/10 text-primary hover:bg-primary/20"
-          disabled={!taskTitle.trim()}
+          disabled={!taskTitle.trim() || isSubmitting}
           type="submit"
         >
-          <Plus size={20} />
+          {isSubmitting ? (
+            <Loader2 className="animate-spin" size={20} />
+          ) : (
+            <Plus size={20} />
+          )}
         </Button>
       </div>
 
       <Separator className={"mt-4 mb-2 bg-primary/30"} />
 
-      <TaskProperties />
+      <TaskProperties categories={categories} control={control} />
 
       <button
         className="mt-3 mr-2 flex items-center gap-2 text-sm"
@@ -88,6 +148,7 @@ export default function CreateTask() {
             <Textarea
               className="border-primary/20 text-sm"
               placeholder="نوت یا لینک (اختیاری) ..."
+              {...register("notes")}
             />
 
             <div className="flex flex-col gap-2">
@@ -115,14 +176,20 @@ export default function CreateTask() {
               <div className="flex w-full items-center gap-2">
                 <Input
                   className="border-primary/20 text-sm"
-                  onChange={(e) => setCheckListValue(e.target.value)}
+                  onChange={(event) => setCheckListValue(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      event.preventDefault();
+                      handleAddCheckListItem();
+                    }
+                  }}
                   placeholder="قدم‌های چک‌لیستت رو تایپ کن ..."
                   value={checkListValue}
                 />
 
                 <Button
                   className="rounded-sm bg-primary/10 text-primary hover:bg-primary/20"
-                  disabled={!checkListValue.trim()}
+                  disabled={!checkListValue.trim() || isSubmitting}
                   onClick={handleAddCheckListItem}
                 >
                   <Plus size={20} />
