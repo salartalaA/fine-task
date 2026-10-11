@@ -1,6 +1,6 @@
 "use client";
 
-import { CircleCheck, Flame, LogOut, Sparkles, X } from "lucide-react";
+import { CircleCheck, LogOut, Sparkles, X } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -64,8 +64,8 @@ export function HeaderProfile() {
           </CardContent>
         </Card>
 
-        <div className="flex items-center gap-2">
-          <div className="flex-1 rounded-sm border border-primary/10 bg-primary/5 p-2">
+        {/* <div className="flex items-center gap-2"> */}
+        {/* <div className="flex-1 rounded-sm border border-primary/10 bg-primary/5 p-2">
             <div className="flex items-center justify-center gap-1 text-amber-500">
               <Flame className="fill-destructive" size={20} />
               <h3 className="font-semibold text-xs">
@@ -74,17 +74,17 @@ export function HeaderProfile() {
             </div>
 
             <p className="mt-2 text-center font-semibold">{"4"}</p>
+          </div> */}
+
+        <div className="flex-1 rounded-sm border border-primary/10 bg-primary/5 p-2">
+          <div className="flex items-center justify-center gap-1 text-emerald-500">
+            <CircleCheck size={20} />
+            <h3 className="font-semibold text-xs">{"تسک‌های انجام شده"}</h3>
           </div>
 
-          <div className="flex-1 rounded-sm border border-primary/10 bg-primary/5 p-2">
-            <div className="flex items-center justify-center gap-1 text-emerald-500">
-              <CircleCheck size={20} />
-              <h3 className="font-semibold text-xs">{"تسک‌های انجام شده"}</h3>
-            </div>
-
-            <p className="mt-2 text-center font-semibold">{"5"}</p>
-          </div>
+          <p className="mt-2 text-center font-semibold">{"5"}</p>
         </div>
+        {/* </div> */}
 
         <DialogFooter>
           <Button

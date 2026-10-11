@@ -1,6 +1,5 @@
 "use client";
 
-import { Flame } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -40,7 +39,7 @@ export default function Greetings() {
   }, []);
 
   return (
-    <div className="mx-auto flex items-center justify-between rounded-lg bg-accent p-3">
+    <div className="mx-auto flex items-start justify-between rounded-lg bg-accent p-3">
       <div className="flex flex-col gap-2">
         <h2 className="font-semibold">{"بعد از ظهرت بخیر سالی ☀️"}</h2>
 
@@ -56,10 +55,11 @@ export default function Greetings() {
           <Skeleton className="h-5 w-16 rounded-3xl bg-primary/10" />
         )}
 
+        {/* 
         <Badge className="mr-auto bg-green-500/10 text-green-600">
           <span>{"1/4"}</span>
           <Flame />
-        </Badge>
+        </Badge> */}
       </div>
     </div>
   );

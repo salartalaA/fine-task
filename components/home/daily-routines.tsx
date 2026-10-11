@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowLeft, Circle, CircleCheck, Flame } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -48,12 +49,12 @@ export default function DailyRoutines() {
           <h3 className="font-semibold text-sm">{"روتین روزانه"}</h3>
         </div>
 
-        <button
+        <Link
           className="m-0 flex items-center gap-1 p-0 font-semibold text-primary text-xs"
-          type="button"
+          href={"/habits"}
         >
           {"عادات"} <ArrowLeft size={14} />
-        </button>
+        </Link>
       </div>
 
       <div className="flex w-fit flex-col items-start gap-2">
@@ -81,13 +82,13 @@ export default function DailyRoutines() {
 
               <span>{habit.title}</span>
 
-              {selectedItem && (
+              {/* {selectedItem && (
                 <div className="flex items-center">
                   <span className="text-amber-500 text-xs">{"1"}</span>
 
                   <Flame className="size-3 fill-destructive text-amber-500" />
                 </div>
-              )}
+              )} */}
             </Button>
           );
         })}

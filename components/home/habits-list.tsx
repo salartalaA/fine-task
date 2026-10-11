@@ -1,6 +1,6 @@
 "use client";
 
-import { CircleCheck, Flame, Trash2 } from "lucide-react";
+import { CircleCheck, Trash2 } from "lucide-react";
 
 const habits = [
   {
@@ -36,18 +36,18 @@ export default function HabitsList() {
           <div className="flex min-w-0 flex-1 items-center gap-3">
             <CircleCheck className="size-6 shrink-0 rounded-sm fill-emerald-500 stroke-foreground" />
 
-            <div className="min-w-0 flex-1">
-              <span className="block truncate font-semibold text-muted-foreground text-sm line-through">
-                {habit.title}
-              </span>
+            {/* <div className="min-w-0 flex-1"> */}
+            <span className="block truncate font-semibold text-muted-foreground text-sm line-through">
+              {habit.title}
+            </span>
 
-              <span className="mt-1 flex items-center gap-1 font-bold font-mono text-amber-500 text-xs tabular-nums">
+            {/* <span className="mt-1 flex items-center gap-1 font-bold font-mono text-amber-500 text-xs tabular-nums">
                 <Flame className="size-3.5 fill-current" />
                 <span>
                   {habit.streak} {"روز تداوم"}
                 </span>
-              </span>
-            </div>
+              </span> */}
+            {/* </div> */}
           </div>
 
           <Trash2 className="size-4.5 stroke-slate-500" />
