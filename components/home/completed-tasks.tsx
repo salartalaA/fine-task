@@ -38,6 +38,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import type { Task } from "./all-tasks";
+import type { Category } from "./task-properties/task-categories";
 
 const dueDates = {
   AFTER_TOMORROW: "پس فردا",
@@ -56,7 +57,13 @@ interface CompletedTasksForm {
   newSteps: Record<string, string>;
 }
 
-export default function CompletedTasks({ tasks }: { tasks: Task[] }) {
+export default function CompletedTasks({
+  tasks,
+  categories,
+}: {
+  tasks: Task[];
+  categories: Category[];
+}) {
   const [expandedTaskIds, setExpandedTaskIds] = useState<string[]>([]);
 
   const {
@@ -169,7 +176,11 @@ export default function CompletedTasks({ tasks }: { tasks: Task[] }) {
                 <div className="flex min-w-0 flex-1 flex-col gap-2">
                   <CardHeader className="p-0">
                     <CardTitle className="flex items-center font-semibold text-muted-foreground text-sm line-through">
-                      <TaskDetailsDialog taskTitle={task.title} />
+                      <TaskDetailsDialog
+                        categories={categories}
+                        task={task}
+                        taskTitle={task.title}
+                      />
                     </CardTitle>
                   </CardHeader>
 

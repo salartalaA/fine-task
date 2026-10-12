@@ -1,7 +1,8 @@
-"use client";
-
 import { Folder } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
+import { updatedSelectedTaskCategory } from "@/app/actions/task";
+import type { Category } from "@/app/generated/prisma/client";
 import {
   Select,
   SelectContent,
@@ -11,44 +12,26 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
-interface Category {
-  label: string;
-  value: string;
-}
+export function MultiSelectTaskCategories({
+  categories,
+  taskIds,
+}: {
+  categories: Category[];
+  taskIds: string[];
+}) {
+  const [category, _] = useState<string>("");
 
-export function MultiSelectTaskCategories() {
-  const [category, setCategory] = useState("INBOX");
+  const handleCategoryChange = async (categoryId: string) => {
+    const result = await updatedSelectedTaskCategory(taskIds, categoryId);
 
-  const categories: Category[] = [
-    {
-      label: "یادداشت‌ها و صندوق ورودی",
-      value: "INBOX",
-    },
-    {
-      label: "خانه و کارهای روزمره",
-      value: "HOME",
-    },
-    {
-      label: "سلامتی و تندرستی",
-      value: "HEALTH",
-    },
-    {
-      label: "مطالعه و رشد",
-      value: "LEARNING",
-    },
-    {
-      label: "امور مالی و پرداخت‌ها",
-      value: "FINANCES",
-    },
-    {
-      label: "سرگرمی و آخر هفته",
-      value: "LEISURE",
-    },
-  ];
+    if (!result.success) {
+      return toast.error(result.message);
+    }
+  };
 
   return (
     <Select
-      onValueChange={(value) => setCategory(value as string)}
+      onValueChange={(value) => handleCategoryChange(value as string)}
       value={category}
     >
       <SelectTrigger className="bg-transparent p-0 [&>svg]:hidden">
@@ -70,10 +53,10 @@ export function MultiSelectTaskCategories() {
                 "bg-transparent",
                 cat.value === category && "bg-accent text-primary"
               )}
-              key={cat.value}
-              value={cat.value}
+              key={cat.id}
+              value={cat.id}
             >
-              {cat.label}
+              {cat.value}
             </SelectItem>
           ))}
         </SelectGroup>

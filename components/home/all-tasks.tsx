@@ -28,11 +28,13 @@ import {
   toggleDoneSubTask,
 } from "@/app/actions/sub-task";
 import {
+  deleteSelectedTasks,
   deleteUserTask,
+  doneSelectedTasks,
   toggleDoneTask,
   togglePinTask,
 } from "@/app/actions/task";
-import type { Prisma } from "@/app/generated/prisma/client";
+import type { Category, Prisma } from "@/app/generated/prisma/client";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -70,7 +72,13 @@ interface AllTasksForm {
   newSubTaskTitles: Record<string, string>;
 }
 
-export default function AllTasks({ tasks }: { tasks: Task[] }) {
+export default function AllTasks({
+  tasks,
+  categories,
+}: {
+  tasks: Task[];
+  categories: Category[];
+}) {
   const [isMultiSelectActive, setIsMultiSelectActive] = useState(false);
   const [selectedTaskIds, setSelectedTaskIds] = useState<string[]>([]);
   const [expandedTaskIds, setExpandedTaskIds] = useState<string[]>([]);
@@ -175,6 +183,28 @@ export default function AllTasks({ tasks }: { tasks: Task[] }) {
     setValue(`newSubTaskTitles.${taskId}`, "");
   };
 
+  const handleDoneSelectedTasks = async () => {
+    const result = await doneSelectedTasks(selectedTaskIds);
+
+    if (!result.success) {
+      return toast.error(result.message);
+    }
+
+    setSelectedTaskIds([]);
+    setIsMultiSelectActive(false);
+  };
+
+  const handleDeleteSelectedTasks = async () => {
+    const result = await deleteSelectedTasks(selectedTaskIds);
+
+    if (!result.success) {
+      return toast.error(result.message);
+    }
+
+    setSelectedTaskIds([]);
+    setIsMultiSelectActive(false);
+  };
+
   const pinnedTasks = tasks.filter((task) => task.isPin);
 
   const unpinnedTasks = tasks.filter((task) => !task.isPin);
@@ -257,7 +287,11 @@ export default function AllTasks({ tasks }: { tasks: Task[] }) {
           <div className="flex min-w-0 flex-1 flex-col gap-2">
             <CardHeader className="p-0">
               <CardTitle className="font-semibold text-sm">
-                <TaskDetailsDialog taskTitle={task.title} />
+                <TaskDetailsDialog
+                  categories={categories}
+                  task={task}
+                  taskTitle={task.title}
+                />
               </CardTitle>
             </CardHeader>
 
@@ -487,6 +521,7 @@ export default function AllTasks({ tasks }: { tasks: Task[] }) {
 
             <button
               className="flex h-9 items-center gap-1.5 rounded-xl bg-emerald-500/20 px-2.5 font-bold text-[11px] text-emerald-300 transition-all hover:bg-emerald-500/30"
+              onClick={handleDoneSelectedTasks}
               type="button"
             >
               <CheckCircle className="h-4 w-4" />
@@ -494,10 +529,14 @@ export default function AllTasks({ tasks }: { tasks: Task[] }) {
               <span>{"علامت به عنوان تمام شده"}</span>
             </button>
 
-            <MultiSelectTaskCategories />
+            <MultiSelectTaskCategories
+              categories={categories}
+              taskIds={selectedTaskIds}
+            />
 
             <button
               className="flex h-9 w-9 items-center justify-center rounded-xl bg-red-500/20 text-red-400 transition-all hover:bg-red-500/30"
+              onClick={handleDeleteSelectedTasks}
               type="button"
             >
               <Trash2 className="h-4 w-4" />

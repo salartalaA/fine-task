@@ -1,3 +1,4 @@
+import { getAllCategories } from "@/app/actions/category";
 import { getUserTasks } from "@/app/actions/task";
 import AllTasks from "@/components/home/all-tasks";
 import DailyRoutines from "@/components/home/daily-routines";
@@ -9,6 +10,10 @@ export default async function TodaySection() {
 
   const todayTasks = allTasks.filter((task) => task.dueAt === "TODAY");
 
+  const allCategories = await getAllCategories();
+
+  const categories = Array.isArray(allCategories) ? allCategories : [];
+
   return (
     <div className="mx-auto my-22 w-full max-w-sm space-y-4">
       <Greetings />
@@ -17,7 +22,7 @@ export default async function TodaySection() {
 
       <TaskBaker />
 
-      <AllTasks tasks={todayTasks} />
+      <AllTasks categories={categories} tasks={todayTasks} />
     </div>
   );
 }

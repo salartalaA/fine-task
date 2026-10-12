@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { requireActiveUser } from "@/app/actions/user";
 import prisma from "@/lib/prisma";
 import { type CreateTaskData, createTaskSchema } from "@/lib/validation/task";
+import type { Due, Recurrence } from "../generated/prisma/enums";
 
 export async function createTask(newTask: CreateTaskData) {
   const currentUser = await requireActiveUser();
@@ -249,6 +250,228 @@ export async function togglePinTask(taskId: string) {
   } catch {
     return {
       message: "خطا در پین کردن تسک",
+      success: false,
+    };
+  }
+}
+
+export async function doneSelectedTasks(taskIds: string[]) {
+  const currentUser = await requireActiveUser();
+
+  if (!currentUser.success) {
+    return currentUser;
+  }
+
+  const { user } = currentUser;
+
+  try {
+    await prisma.task.updateMany({
+      data: {
+        isDone: true,
+      },
+      where: {
+        id: { in: taskIds },
+        userId: user.id,
+      },
+    });
+
+    revalidatePath("/");
+
+    return { success: true };
+  } catch {
+    return {
+      message: "خطا در علامت زدن گروهی به عنوان انجام شده",
+      success: false,
+    };
+  }
+}
+
+export async function deleteSelectedTasks(taskIds: string[]) {
+  const currentUser = await requireActiveUser();
+
+  if (!currentUser.success) {
+    return currentUser;
+  }
+
+  const { user } = currentUser;
+
+  try {
+    await prisma.task.deleteMany({
+      where: {
+        id: { in: taskIds },
+        userId: user.id,
+      },
+    });
+
+    revalidatePath("/");
+
+    return {
+      success: true,
+    };
+  } catch {
+    return {
+      message: "خطا در حذف گروهی تسک‌ها",
+      success: false,
+    };
+  }
+}
+
+export async function updatedSelectedTaskCategory(
+  taskIds: string[],
+  categoryId: string
+) {
+  const currentUser = await requireActiveUser();
+
+  if (!currentUser.success) {
+    return currentUser;
+  }
+
+  const { user } = currentUser;
+
+  try {
+    const category = await prisma.category.findFirst({
+      where: {
+        id: categoryId,
+        userId: user.id,
+      },
+    });
+
+    if (!category) {
+      return {
+        message: "کتگوری انتخاب‌شده معتبر نیست.",
+        success: false,
+      };
+    }
+
+    await prisma.task.updateMany({
+      data: {
+        categoryId,
+      },
+      where: {
+        id: { in: taskIds },
+        userId: user.id,
+      },
+    });
+
+    revalidatePath("/");
+
+    return {
+      success: true,
+    };
+  } catch {
+    return {
+      message: "خطا در تغییر گروهی دسته‌بندی",
+      success: false,
+    };
+  }
+}
+
+interface UpdateTaskData {
+  categoryId: string | null;
+  dueAt: Due;
+  isDone: boolean;
+  notes: string;
+  recurrence: Recurrence;
+  subTasks: {
+    id: string | null;
+    title: string;
+    isDone: boolean;
+  }[];
+  title: string;
+}
+
+export async function updateTaskDetails(taskId: string, data: UpdateTaskData) {
+  const currentUser = await requireActiveUser();
+
+  if (!currentUser.success) {
+    return currentUser;
+  }
+
+  try {
+    const updatedTask = await prisma.task.updateMany({
+      data: {
+        categoryId: data.categoryId,
+        dueAt: data.dueAt,
+        isDone: data.isDone,
+        notes: data.notes || null,
+        recurrence: data.recurrence,
+        title: data.title,
+      },
+      where: {
+        id: taskId,
+        userId: currentUser.user.id,
+      },
+    });
+
+    if (updatedTask.count === 0) {
+      return {
+        message: "تسک پیدا نشد.",
+        success: false,
+      };
+    }
+
+    const existingSubTasks = await prisma.subTask.findMany({
+      select: {
+        id: true,
+      },
+      where: {
+        task: {
+          userId: currentUser.user.id,
+        },
+        taskId,
+      },
+    });
+
+    const submittedIds = data.subTasks
+      .map((subTask) => subTask.id)
+      .filter((id): id is string => id !== null);
+
+    const idsToDelete = existingSubTasks
+      .map((subTask) => subTask.id)
+      .filter((id) => !submittedIds.includes(id));
+
+    if (idsToDelete.length > 0) {
+      await prisma.subTask.deleteMany({
+        where: {
+          id: { in: idsToDelete },
+          taskId,
+        },
+      });
+    }
+
+    for (const subTask of data.subTasks) {
+      if (subTask.id === null) {
+        // biome-ignore lint/performance/noAwaitInLoops: Shut the fuck up!
+        await prisma.subTask.create({
+          data: {
+            isDone: subTask.isDone,
+            taskId,
+            title: subTask.title,
+          },
+        });
+      } else {
+        await prisma.subTask.updateMany({
+          data: {
+            isDone: subTask.isDone,
+            title: subTask.title,
+          },
+          where: {
+            id: subTask.id,
+            task: {
+              userId: currentUser.user.id,
+            },
+            taskId,
+          },
+        });
+      }
+    }
+
+    revalidatePath("/");
+
+    return { success: true };
+  } catch {
+    return {
+      message: "خطا در ذخیره تغییرات.",
       success: false,
     };
   }

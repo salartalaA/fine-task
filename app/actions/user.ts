@@ -132,7 +132,7 @@ export async function requireActiveUser() {
 
   if (!currentUser) {
     return {
-      reason: "UNAUTHORIZED",
+      message: "احراز هویت نشده",
       success: false,
     } as const;
   }

@@ -1,31 +1,17 @@
-"use client";
-
 import { CircleCheck, Trash2 } from "lucide-react";
+import { deactivateRoutineFromForm } from "@/app/actions/routine";
 
-const habits = [
-  {
-    id: "habit-1",
-    streak: 0,
-    title: "نوشیدن 500 میلی‌لیتر آب",
-  },
-  {
-    id: "habit-2",
-    streak: 14,
-    title: "15 دقیقه پیاده‌روی در فضای باز",
-  },
-  {
-    id: "habit-3",
-    streak: 0,
-    title: "خواندن 20 صفحه از کتاب فعلی",
-  },
-  {
-    id: "habit-4",
-    streak: 12,
-    title: "5 دقیقه مرتب کردن میز و آشپزخانه",
-  },
-] as const;
+interface Habit {
+  id: string;
+  isDone: boolean;
+  title: string;
+}
 
-export default function HabitsList() {
+interface HabitsListProps {
+  habits: Habit[];
+}
+
+export default function HabitsList({ habits }: HabitsListProps) {
   return (
     <div className="space-y-2">
       {habits.map((habit) => (
@@ -34,23 +20,35 @@ export default function HabitsList() {
           key={habit.id}
         >
           <div className="flex min-w-0 flex-1 items-center gap-3">
-            <CircleCheck className="size-6 shrink-0 rounded-sm fill-emerald-500 stroke-foreground" />
+            <CircleCheck
+              className={`size-6 shrink-0 rounded-sm ${
+                habit.isDone
+                  ? "fill-emerald-500 stroke-foreground"
+                  : "text-muted-foreground"
+              }`}
+            />
 
-            {/* <div className="min-w-0 flex-1"> */}
-            <span className="block truncate font-semibold text-muted-foreground text-sm line-through">
+            <span
+              className={`block truncate font-semibold text-sm ${
+                habit.isDone
+                  ? "text-muted-foreground line-through"
+                  : "text-foreground"
+              }`}
+            >
               {habit.title}
             </span>
-
-            {/* <span className="mt-1 flex items-center gap-1 font-bold font-mono text-amber-500 text-xs tabular-nums">
-                <Flame className="size-3.5 fill-current" />
-                <span>
-                  {habit.streak} {"روز تداوم"}
-                </span>
-              </span> */}
-            {/* </div> */}
           </div>
 
-          <Trash2 className="size-4.5 stroke-slate-500" />
+          <form action={deactivateRoutineFromForm}>
+            <input name="routineId" type="hidden" value={habit.id} />
+            <button
+              aria-label={`برگرداندن ${habit.title} به گوگولی‌ها`}
+              className="shrink-0"
+              type="submit"
+            >
+              <Trash2 className="size-4.5 stroke-slate-500" />
+            </button>
+          </form>
         </div>
       ))}
     </div>

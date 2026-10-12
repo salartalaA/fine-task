@@ -9,7 +9,8 @@ model User {
   routines   Routine[]
   tasks      Task[]
 
-  sessions Session[]
+  sessions                    Session[]
+  routineSuggestionDismissals RoutineSuggestionDismissal[]
 }
 
 model Session {

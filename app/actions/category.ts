@@ -10,10 +10,7 @@ export async function getAllCategories() {
   const currentUser = await requireActiveUser();
 
   if (!currentUser.success) {
-    return {
-      message: "احراز هویت نشده.",
-      success: false,
-    };
+    return currentUser;
   }
 
   const { user } = currentUser;
@@ -31,10 +28,7 @@ export async function createCategory(newCategory: Category["value"]) {
   const currentUser = await requireActiveUser();
 
   if (!currentUser.success) {
-    return {
-      message: "احراز هویت نشده.",
-      success: false,
-    };
+    return currentUser;
   }
 
   const { user } = currentUser;
@@ -87,10 +81,7 @@ export async function updateCategory(updatedCategory: Category) {
   const currentUser = await requireActiveUser();
 
   if (!currentUser.success) {
-    return {
-      message: "احراز هویت نشده.",
-      success: false,
-    };
+    return currentUser;
   }
 
   const { user } = currentUser;
@@ -135,10 +126,7 @@ export async function deleteCategory(categoryId: string) {
   const currentUser = await requireActiveUser();
 
   if (!currentUser.success) {
-    return {
-      message: "احراز هویت نشده.",
-      success: false,
-    };
+    return currentUser;
   }
 
   const { user } = currentUser;
