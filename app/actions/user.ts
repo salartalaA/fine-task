@@ -4,6 +4,7 @@ import crypto from "node:crypto";
 import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 import type { LoginData, RegisterData } from "@/lib/validation/auth";
 
@@ -156,6 +157,8 @@ export async function logout() {
   }
 
   cookieStore.delete("session");
+
+  redirect("/auth/login");
 }
 
 export async function deleteAccount(userId: string) {
