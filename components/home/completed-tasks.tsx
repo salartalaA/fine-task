@@ -8,6 +8,7 @@ import {
   CircleCheck,
   Folder,
   ListTodo,
+  Loader2,
   Pin,
   Plus,
   Repeat,
@@ -17,6 +18,14 @@ import {
   X,
 } from "lucide-react";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import {
+  createSubTask,
+  deleteSubTask,
+  toggleDoneSubTask,
+} from "@/app/actions/sub-task";
+import { deleteUserTask, togglePinTask } from "@/app/actions/task";
 import { TaskDetailsDialog } from "@/components/home/task-details-dialog";
 import { Button } from "@/components/ui/button";
 import {
@@ -28,18 +37,41 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import type { Task } from "./all-tasks";
 
-export default function CompletedTasks() {
-  const tasks = [
-    {
-      id: "task-1",
-      title: "خرید هفتگی مواد غذایی و محصولات تازه",
-    },
-  ];
+const dueDates = {
+  AFTER_TOMORROW: "پس فردا",
+  TODAY: "امروز",
+  TOMORROW: "فردا",
+} as const;
 
+const recurrence = {
+  DAILY: "روزانه",
+  MONTHLY: "ماهانه",
+  ONE_TIME: "یک بار",
+  WEEKLY: "هفتگی",
+} as const;
+
+interface CompletedTasksForm {
+  newSteps: Record<string, string>;
+}
+
+export default function CompletedTasks({ tasks }: { tasks: Task[] }) {
   const [expandedTaskIds, setExpandedTaskIds] = useState<string[]>([]);
-  const [newSteps, setNewSteps] = useState<Record<string, string>>({});
-  const [pinnedTaskIds, setPinnedTaskIds] = useState<string[]>([]);
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { isSubmitting },
+  } = useForm<CompletedTasksForm>({
+    defaultValues: {
+      newSteps: {},
+    },
+  });
+
+  const newSteps = watch("newSteps");
 
   const toggleSubTasks = (taskId: string) => {
     setExpandedTaskIds((current) =>
@@ -49,12 +81,58 @@ export default function CompletedTasks() {
     );
   };
 
-  const toggleTaskPin = (taskId: string) => {
-    setPinnedTaskIds((current) =>
-      current.includes(taskId)
-        ? current.filter((id) => id !== taskId)
-        : [...current, taskId]
-    );
+  const toggleTaskPin = async (taskId: string) => {
+    const result = await togglePinTask(taskId);
+
+    if (!result.success && "message" in result) {
+      return toast.error(result.message);
+    }
+  };
+
+  const handleDeleteTask = async (taskId: string) => {
+    const result = await deleteUserTask(taskId);
+
+    if (!result.success) {
+      return toast.error(result.message);
+    }
+  };
+
+  const handleDoneToggleSubTask = async (subTaskId: string, taskId: string) => {
+    const result = await toggleDoneSubTask(subTaskId, taskId);
+
+    if (!result.success) {
+      return toast.error(result.message);
+    }
+  };
+
+  const handleDeleteSubTask = async (subTaskId: string, taskId: string) => {
+    const result = await deleteSubTask(subTaskId, taskId);
+
+    if (!result.success) {
+      return toast.error(result.message);
+    }
+  };
+
+  const handleCreateSubTask = async (
+    taskId: string,
+    data: CompletedTasksForm
+  ) => {
+    const title = data.newSteps[taskId] ?? "";
+
+    if (!title.trim()) {
+      return;
+    }
+
+    const result = await createSubTask({
+      taskId,
+      title: title.trim(),
+    });
+
+    if (!result.success) {
+      return toast.error(result.message);
+    }
+
+    setValue(`newSteps.${taskId}`, "");
   };
 
   return (
@@ -74,6 +152,9 @@ export default function CompletedTasks() {
         {tasks.map((task) => {
           const showSubTasks = expandedTaskIds.includes(task.id);
           const newStep = newSteps[task.id] ?? "";
+          const doneSubTasks = task.subTasks.filter(
+            (subTask) => subTask.isDone
+          );
 
           return (
             <div key={task.id}>
@@ -83,8 +164,6 @@ export default function CompletedTasks() {
                   showSubTasks && "rounded-b-none"
                 )}
               >
-                {/* <Circle className="size-6 shrink-0 rounded-sm stroke-primary/30" /> */}
-
                 <CircleCheck className="size-6 shrink-0 rounded-sm fill-emerald-500 stroke-foreground" />
 
                 <div className="flex min-w-0 flex-1 flex-col gap-2">
@@ -98,20 +177,20 @@ export default function CompletedTasks() {
                     <div className="flex flex-wrap items-center gap-1 gap-y-2">
                       <Folder className="size-3 text-indigo-500" />
 
-                      <span>{"خانه و کارهای روزمره"}</span>
+                      <span>{task.category?.value ?? "بدون دسته‌بندی"}</span>
 
                       <span className="mx-1">{"•"}</span>
 
                       <span className="flex items-center gap-1 font-semibold text-primary">
                         <Calendar className="size-3" />
-                        {"امروز"}
+                        {dueDates[task.dueAt]}
                       </span>
 
                       <span className="mx-1">{"•"}</span>
 
                       <span className="flex items-center gap-1 font-semibold text-emerald-500">
                         <Repeat className="size-3" />
-                        {"روزانه"}
+                        {recurrence[task.recurrence]}
                       </span>
 
                       <span className="mx-1">{"•"}</span>
@@ -122,7 +201,10 @@ export default function CompletedTasks() {
                         type="button"
                       >
                         <ListTodo className="size-3 text-slate-500" />
-                        <span className="mt-0.5">{"0/2"}</span>
+
+                        <span className="mt-0.5">
+                          {doneSubTasks.length}/{task.subTasks.length}
+                        </span>
 
                         {showSubTasks ? (
                           <ChevronUp className="-ml-1 size-3" />
@@ -134,23 +216,29 @@ export default function CompletedTasks() {
                   </CardContent>
                 </div>
 
-                {/* <div className="flex items-center gap-2">
-                  <Trash2 className="size-4.5 shrink-0 rounded-sm stroke-slate-500" />
-                </div> */}
-
                 <div className="flex items-center gap-2">
-                  <button onClick={() => toggleTaskPin(task.id)} type="button">
+                  <button
+                    aria-label={task.isPin ? "برداشتن پین" : "پین کردن تسک"}
+                    onClick={() => toggleTaskPin(task.id)}
+                    type="button"
+                  >
                     <Pin
                       className={cn(
                         "size-4.5 shrink-0 rounded-sm",
-                        pinnedTaskIds.includes(task.id)
+                        task.isPin
                           ? "fill-primary stroke-primary"
                           : "stroke-slate-500"
                       )}
                     />
                   </button>
 
-                  <Trash2 className="size-4.5 shrink-0 rounded-sm stroke-slate-500" />
+                  <button
+                    aria-label="حذف تسک"
+                    onClick={() => handleDeleteTask(task.id)}
+                    type="button"
+                  >
+                    <Trash2 className="size-4.5 shrink-0 rounded-sm stroke-slate-500" />
+                  </button>
                 </div>
               </Card>
 
@@ -158,65 +246,76 @@ export default function CompletedTasks() {
                 <Card className="rounded-md rounded-t-none border border-primary/10 border-t-0 bg-primary/5 px-4 py-3.5 ring-0">
                   <CardContent className="p-0 text-sm">
                     <div className="flex flex-col gap-4">
-                      <div className="flex items-center justify-between">
-                        <button
-                          className="flex items-center gap-2"
-                          type="button"
+                      {task.subTasks.map((subTask) => (
+                        <div
+                          className="flex items-center justify-between"
+                          key={subTask.id}
                         >
-                          <Square className="size-4 shrink-0 rounded-sm stroke-slate-500" />
+                          <button
+                            className="flex items-center gap-2 text-right"
+                            onClick={() =>
+                              handleDoneToggleSubTask(subTask.id, task.id)
+                            }
+                            type="button"
+                          >
+                            {subTask.isDone ? (
+                              <SquareCheck className="size-4 shrink-0 fill-emerald-500" />
+                            ) : (
+                              <Square className="size-4 shrink-0 rounded-sm stroke-slate-500" />
+                            )}
 
-                          <span>{"بیبی‌اسفناج ارگانیک، لیمو و آووکادو"}</span>
-                        </button>
+                            <span
+                              className={cn(
+                                subTask.isDone &&
+                                  "text-muted-foreground line-through"
+                              )}
+                            >
+                              {subTask.title}
+                            </span>
+                          </button>
 
-                        <button
-                          className="flex items-center gap-2"
-                          type="button"
-                        >
-                          <X className="size-3 shrink-0 rounded-sm stroke-slate-500" />
-                        </button>
-                      </div>
-
-                      <div className="flex items-center justify-between">
-                        <button
-                          className="flex items-center gap-2"
-                          type="button"
-                        >
-                          <SquareCheck className="size-4 shrink-0 fill-emerald-500" />
-
-                          <span className="text-muted-foreground line-through">
-                            {"روغن زیتون فرابکر و ماست یونانی"}
-                          </span>
-                        </button>
-
-                        <button
-                          className="flex items-center gap-2"
-                          type="button"
-                        >
-                          <X className="size-3 shrink-0 rounded-sm stroke-slate-500" />
-                        </button>
-                      </div>
+                          <button
+                            aria-label="حذف ساب‌تسک"
+                            onClick={() =>
+                              handleDeleteSubTask(subTask.id, task.id)
+                            }
+                            type="button"
+                          >
+                            <X className="size-3 shrink-0 rounded-sm stroke-slate-500" />
+                          </button>
+                        </div>
+                      ))}
                     </div>
                   </CardContent>
 
                   <CardFooter className="flex items-center gap-2 p-0">
                     <Input
                       className="border-primary/20 text-sm"
-                      onChange={(e) =>
-                        setNewSteps((current) => ({
-                          ...current,
-                          [task.id]: e.target.value,
-                        }))
-                      }
                       placeholder="اضافه کردن قدم جدید (مثلا آووکادو)"
-                      value={newStep}
+                      {...register(`newSteps.${task.id}`)}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter") {
+                          event.preventDefault();
+                          handleSubmit((data) =>
+                            handleCreateSubTask(task.id, data)
+                          )();
+                        }
+                      }}
                     />
 
                     <Button
                       className="rounded-sm bg-primary/10 text-primary hover:bg-primary/20"
-                      disabled={!newStep.trim()}
-                      type="submit"
+                      disabled={!newStep.trim() || isSubmitting}
+                      onClick={handleSubmit((data) =>
+                        handleCreateSubTask(task.id, data)
+                      )}
+                      type="button"
                     >
-                      <Plus size={20} />
+                      {isSubmitting ? (
+                        <Loader2 className="animate-spin" size={20} />
+                      ) : (
+                        <Plus size={20} />
+                      )}
                     </Button>
                   </CardFooter>
                 </Card>
