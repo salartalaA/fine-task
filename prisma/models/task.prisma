@@ -2,7 +2,7 @@ model Task {
   id         String     @id @default(cuid())
   title      String
   notes      String?
-  dueAt      Due?
+  dueAt      Due
   recurrence Recurrence
   isDone     Boolean    @default(false)
   isPin      Boolean    @default(false)
