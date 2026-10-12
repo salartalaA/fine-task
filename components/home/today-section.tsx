@@ -10,13 +10,17 @@ export default async function TodaySection() {
 
   const todayTasks = allTasks.filter((task) => task.dueAt === "TODAY");
 
+  const todayUncompletedTasks = todayTasks.filter(
+    (task) => task.isDone === false
+  );
+
   const allCategories = await getAllCategories();
 
   const categories = Array.isArray(allCategories) ? allCategories : [];
 
   return (
     <div className="mx-auto my-22 w-full max-w-sm space-y-4">
-      <Greetings />
+      <Greetings tasksLength={todayUncompletedTasks.length} />
 
       <DailyRoutines />
 

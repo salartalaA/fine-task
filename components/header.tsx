@@ -1,9 +1,12 @@
 import { NotepadText } from "lucide-react";
+import { requireActiveUser } from "@/app/actions/user";
 import HeaderSearch from "@/components/header-search";
 import { HeaderProfile } from "@/components/home/header-profile";
 import { Badge } from "@/components/ui/badge";
 
-export default function Header() {
+export default async function Header() {
+  const currentUserEmail = (await requireActiveUser()).user?.email;
+
   return (
     <header className="flex items-center justify-center">
       <div className="fixed top-3 flex w-full max-w-sm items-center justify-between rounded-full bg-primary/5 p-2 backdrop-blur-md">
@@ -23,7 +26,7 @@ export default function Header() {
         <HeaderSearch />
 
         {/* Profile */}
-        <HeaderProfile />
+        <HeaderProfile userEmail={currentUserEmail ?? ""} />
       </div>
     </header>
   );

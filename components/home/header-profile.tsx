@@ -15,7 +15,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-export function HeaderProfile() {
+export function HeaderProfile({ userEmail }: { userEmail: string }) {
   const [openState, setOpenState] = useState(false);
 
   const handleLogOut = async () => {
@@ -61,9 +61,9 @@ export function HeaderProfile() {
             />
 
             <div className="flex flex-col gap-1 font-semibold">
-              <h3>{"سالار"}</h3>
+              <h3>Meow</h3>
               <p className="text-muted-foreground text-xs">
-                {"salarmhmdn@gmail.com"}
+                {`با ایمیل ${userEmail} وارد شدی`}
               </p>
             </div>
           </CardContent>

@@ -29,7 +29,7 @@ const qoutes = [
   "هیچ‌کس به جات انجامش نمی‌ده",
 ];
 
-export default function Greetings() {
+export default function Greetings({ tasksLength }: { tasksLength: number }) {
   const [selectedQoute, setSelectedQoute] = useState("");
 
   useEffect(() => {
@@ -41,11 +41,17 @@ export default function Greetings() {
   return (
     <div className="mx-auto flex items-start justify-between rounded-lg bg-accent p-3">
       <div className="flex flex-col gap-2">
-        <h2 className="font-semibold">{"بعد از ظهرت بخیر سالی ☀️"}</h2>
+        <h2 className="font-semibold">{"وقتت بخیر دوست عزیز"}</h2>
 
-        <p className="font-bold text-muted-foreground text-xs">
-          {"برای امروز 3 تا تسک انجام نشده داری"}
-        </p>
+        {tasksLength > 0 ? (
+          <p className="font-bold text-muted-foreground text-xs">
+            {`برای امروز ${tasksLength} تا تسک انجام نشده داری`}
+          </p>
+        ) : (
+          <p className="font-bold text-muted-foreground text-xs">
+            {"همه تسکای امروزتو انجام دادی!"}
+          </p>
+        )}
       </div>
 
       <div className="flex flex-col gap-2">
