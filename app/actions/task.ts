@@ -84,3 +84,172 @@ export async function createTask(newTask: CreateTaskData) {
     };
   }
 }
+
+export async function getUserTasks() {
+  const currentUser = await requireActiveUser();
+
+  if (!currentUser.success) {
+    return [];
+  }
+
+  const { user } = currentUser;
+
+  const allTasks = await prisma.task.findMany({
+    include: {
+      category: true,
+      subTasks: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    where: {
+      userId: user.id,
+    },
+  });
+
+  return allTasks;
+}
+
+export async function deleteUserTask(taskId: string) {
+  const currentUser = await requireActiveUser();
+
+  if (!currentUser.success) {
+    return {
+      message: "احراز هویت نشده",
+      success: false,
+    };
+  }
+
+  const { user } = currentUser;
+
+  try {
+    const existingTask = await prisma.task.findFirst({
+      where: {
+        id: taskId,
+        userId: user.id,
+      },
+    });
+
+    if (!existingTask) {
+      return {
+        message: "این تسک وجود ندارد",
+        success: false,
+      };
+    }
+
+    await prisma.task.delete({
+      where: {
+        id: taskId,
+        userId: user.id,
+      },
+    });
+
+    revalidatePath("/");
+
+    return { success: true };
+  } catch {
+    return {
+      message: "خطا در حذف تسک",
+      success: false,
+    };
+  }
+}
+
+export async function toggleDoneTask(taskId: string) {
+  const currentUser = await requireActiveUser();
+
+  if (!currentUser.success) {
+    return {
+      message: "احراز هویت نشده",
+      success: false,
+    };
+  }
+
+  const { user } = currentUser;
+
+  try {
+    const existingTask = await prisma.task.findFirst({
+      where: {
+        id: taskId,
+        userId: user.id,
+      },
+    });
+
+    if (!existingTask) {
+      return {
+        message: "این تسک وجود ندارد",
+        success: false,
+      };
+    }
+
+    const updatedTask = await prisma.task.update({
+      data: {
+        isDone: !existingTask.isDone,
+      },
+      where: {
+        id: taskId,
+        userId: user.id,
+      },
+    });
+
+    revalidatePath("/");
+
+    return {
+      isDone: updatedTask.isDone,
+      success: true,
+    };
+  } catch {
+    return {
+      message: "خطا در انجام تسک",
+      success: false,
+    };
+  }
+}
+
+export async function togglePinTask(taskId: string) {
+  const currentUser = await requireActiveUser();
+
+  if (!currentUser.success) {
+    return currentUser;
+  }
+
+  const { user } = currentUser;
+
+  try {
+    const task = await prisma.task.findFirst({
+      where: {
+        id: taskId,
+        userId: user.id,
+      },
+    });
+
+    if (!task) {
+      return {
+        message: "تسک پیدا نشد.",
+        success: false,
+      };
+    }
+
+    const updatedTask = await prisma.task.update({
+      data: {
+        isPin: !task.isPin,
+      },
+
+      where: {
+        id: task.id,
+      },
+    });
+
+    revalidatePath("/");
+
+    return {
+      isPin: updatedTask.isPin,
+      success: true,
+    };
+  } catch {
+    return {
+      message: "خطا در پین کردن تسک",
+      success: false,
+    };
+  }
+}

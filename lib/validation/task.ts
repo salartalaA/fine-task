@@ -33,4 +33,16 @@ export const createTaskSchema = z.object({
     .max(80, "حداکثر ۸۰ کرکتر"),
 });
 
+export const createSubTaskSchema = z.object({
+  taskId: z.string().min(1, "شناسه تسک معتبر نیست"),
+
+  title: z
+    .string()
+    .trim()
+    .min(1, "عنوان ساب‌تسک را وارد کنید")
+    .max(200, "عنوان ساب‌تسک حداکثر می‌تواند ۲۰۰ کاراکتر باشد"),
+});
+
 export type CreateTaskData = z.infer<typeof createTaskSchema>;
+
+export type CreateSubTaskData = z.infer<typeof createSubTaskSchema>;
