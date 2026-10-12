@@ -57,7 +57,7 @@ export default function Footer() {
               className="relative bg-transparent p-5 hover:bg-transparent active:scale-[0.96]"
               key={navItem.href}
             >
-              <Link href={navItem.href}>
+              <Link href={navItem.href} prefetch>
                 {isActive && (
                   <motion.div
                     className="absolute inset-0 rounded-md border border-primary/20 bg-primary/10"
