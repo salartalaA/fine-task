@@ -9,67 +9,78 @@ export async function createTask(newTask: CreateTaskData) {
   const currentUser = await requireActiveUser();
 
   if (!currentUser.success) {
-    return currentUser;
-  }
-
-  const parsedTask = createTaskSchema.safeParse(newTask);
-
-  if (!parsedTask.success) {
     return {
-      message: "اطلاعات واردشده معتبر نیستند.",
+      message: "احراز هویت نشده",
       success: false,
     };
   }
 
-  const { data } = parsedTask;
-  const { user } = currentUser;
+  try {
+    const validateTask = createTaskSchema.safeParse(newTask);
 
-  const category = await prisma.category.findFirst({
-    where: {
-      id: data.category.id,
-      userId: user.id,
-    },
-  });
+    if (!validateTask.success) {
+      return {
+        message: "اطلاعات واردشده معتبر نیستند.",
+        success: false,
+      };
+    }
 
-  if (!category) {
-    return {
-      message: "دسته‌بندی انتخاب‌شده معتبر نیست.",
-      success: false,
-    };
-  }
+    const { data } = validateTask;
+    const { user } = currentUser;
 
-  const existingTask = await prisma.task.findFirst({
-    where: {
-      title: newTask.title,
-    },
-  });
-
-  if (existingTask) {
-    return {
-      message: "این تسک در لیست وجود دارد.",
-      success: false,
-    };
-  }
-
-  await prisma.task.create({
-    data: {
-      categoryId: data.category.id,
-      dueAt: data.dueAt,
-      isDone: false,
-      isPin: false,
-      notes: data.notes ?? "",
-      recurrence: data.recurrence,
-      subTasks: {
-        create: data.subTasks?.map((subTask) => ({
-          title: subTask?.title ?? "",
-        })),
+    const category = await prisma.category.findFirst({
+      where: {
+        id: data.category.id,
+        userId: user.id,
       },
-      title: data.title,
-      userId: user.id,
-    },
-  });
+    });
 
-  revalidatePath("/");
+    if (!category) {
+      return {
+        message: "دسته‌بندی انتخاب‌شده معتبر نیست.",
+        success: false,
+      };
+    }
 
-  return { success: true };
+    const existingTask = await prisma.task.findFirst({
+      where: {
+        title: data.title,
+        userId: user.id,
+      },
+    });
+
+    if (existingTask) {
+      return {
+        message: "این تسک در لیست وجود دارد.",
+        success: false,
+      };
+    }
+
+    await prisma.task.create({
+      data: {
+        categoryId: data.category.id,
+        dueAt: data.dueAt,
+        isDone: false,
+        isPin: false,
+        notes: data.notes ?? "",
+        recurrence: data.recurrence,
+        subTasks: {
+          create: data.subTasks?.map((subTask) => ({
+            title: subTask?.title ?? "",
+          })),
+        },
+        title: data.title,
+        userId: user.id,
+      },
+    });
+
+    revalidatePath("/");
+
+    return { success: true };
+  } catch {
+    return {
+      message: "خطا در ایجاد تسک",
+      success: false,
+    };
+  }
 }

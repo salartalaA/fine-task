@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import z from "zod";
 import { requireActiveUser } from "@/app/actions/user";
 import type { Category } from "@/components/home/task-properties/task-categories";
 import prisma from "@/lib/prisma";
@@ -9,7 +10,10 @@ export async function getAllCategories() {
   const currentUser = await requireActiveUser();
 
   if (!currentUser.success) {
-    return null;
+    return {
+      message: "احراز هویت نشده.",
+      success: false,
+    };
   }
 
   const { user } = currentUser;
@@ -27,72 +31,147 @@ export async function createCategory(newCategory: Category["value"]) {
   const currentUser = await requireActiveUser();
 
   if (!currentUser.success) {
-    return null;
-  }
-
-  const { user } = currentUser;
-
-  const existingCategory = await prisma.category.findFirst({
-    where: {
-      userId: user.id,
-      value: newCategory,
-    },
-  });
-
-  if (existingCategory) {
     return {
-      message: "این دسته‌بندی در لیست وجود دارد.",
+      message: "احراز هویت نشده.",
       success: false,
     };
   }
 
-  await prisma.category.create({
-    data: {
-      userId: user.id,
-      value: newCategory,
-    },
-  });
+  const { user } = currentUser;
 
-  revalidatePath("/");
+  try {
+    const validatedCategory = z.string().trim().min(1).safeParse(newCategory);
+
+    if (!validatedCategory.success) {
+      return {
+        message: "نام دسته‌بندی معتبر نیست.",
+        success: false,
+      };
+    }
+
+    const { data } = validatedCategory;
+
+    const existingCategory = await prisma.category.findFirst({
+      where: {
+        userId: user.id,
+        value: data,
+      },
+    });
+
+    if (existingCategory) {
+      return {
+        message: "این دسته‌بندی در لیست وجود دارد.",
+        success: false,
+      };
+    }
+
+    await prisma.category.create({
+      data: {
+        userId: user.id,
+        value: data,
+      },
+    });
+
+    revalidatePath("/");
+
+    return { success: true };
+  } catch {
+    return {
+      message: "خطا در ایجاد دسته‌بندی",
+      success: false,
+    };
+  }
 }
 
 export async function updateCategory(updatedCategory: Category) {
   const currentUser = await requireActiveUser();
 
   if (!currentUser.success) {
-    return null;
+    return {
+      message: "احراز هویت نشده.",
+      success: false,
+    };
   }
 
   const { user } = currentUser;
 
-  await prisma.category.update({
-    data: {
-      value: updatedCategory.value,
-    },
-    where: {
-      id: updatedCategory.id,
-      userId: user.id,
-    },
-  });
+  try {
+    const existingCategory = await prisma.category.findFirst({
+      where: {
+        id: updatedCategory.id,
+        userId: user.id,
+      },
+    });
 
-  revalidatePath("/");
+    if (!existingCategory) {
+      return {
+        message: "این دسته‌بندی وجود ندارد.",
+        success: false,
+      };
+    }
+
+    await prisma.category.update({
+      data: {
+        value: updatedCategory.value,
+      },
+      where: {
+        id: updatedCategory.id,
+        userId: user.id,
+      },
+    });
+
+    revalidatePath("/");
+
+    return { success: true };
+  } catch {
+    return {
+      message: "خطا در به‌روزرسانی دسته‌بندی",
+      success: false,
+    };
+  }
 }
 
 export async function deleteCategory(categoryId: string) {
   const currentUser = await requireActiveUser();
 
   if (!currentUser.success) {
-    return null;
+    return {
+      message: "احراز هویت نشده.",
+      success: false,
+    };
   }
 
   const { user } = currentUser;
 
-  await prisma.category.delete({
-    where: {
-      id: categoryId,
-      userId: user.id,
-    },
-  });
+  try {
+    const existingCategory = await prisma.category.findFirst({
+      where: {
+        id: categoryId,
+        userId: user.id,
+      },
+    });
 
-  revalidatePath("/");
+    if (!existingCategory) {
+      return {
+        message: "این دسته‌بندی وجود ندارد",
+        success: false,
+      };
+    }
+
+    await prisma.category.delete({
+      where: {
+        id: categoryId,
+        userId: user.id,
+      },
+    });
+
+    revalidatePath("/");
+
+    return { success: true };
+  } catch {
+    return {
+      message: "خطا در حذف دسته‌بندی",
+      success: false,
+    };
+  }
 }
